@@ -1,0 +1,75 @@
+name: iOS UI Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      simulator:
+        description: 'Simulator name'
+        required: false
+        default: 'iPhone 17 Pro'
+        type: string
+
+jobs:
+  test:
+    name: Run UI Tests
+    runs-on: self-hosted
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Show environment
+        run: |
+          echo "Runner: $(hostname)"
+          echo "macOS: $(sw_vers -productVersion)"
+          echo "Xcode: $(xcodebuild -version | head -1)"
+      
+      - name: Boot simulator
+        run: |
+          SIM_NAME="${{ inputs.simulator }}"
+          echo "Booting $SIM_NAME..."
+          xcrun simctl boot "$SIM_NAME" || echo "Already booted"
+          xcrun simctl bootstatus "$SIM_NAME" -b
+      
+      - name: Configure simulator location and privacy
+        run: ./scripts/setup-simulator.sh
+      
+      - name: Run UI tests
+        id: tests
+        continue-on-error: true
+        run: |
+          mkdir -p build
+          xcodebuild test \
+            -project ServiceLocator.xcodeproj \
+            -scheme ServiceLocator \
+            -destination "platform=iOS Simulator,name=${{ inputs.simulator }}" \
+            -resultBundlePath build/TestResults.xcresult \
+            -quiet | tee build/xcodebuild.log
+      
+      - name: Generate dashboard
+        if: always()
+        run: |
+          python3 scripts/generate-dashboard.py \
+            build/TestResults.xcresult \
+            build/dashboard
+      
+      - name: Upload dashboard artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-dashboard-${{ github.run_number }}
+          path: build/dashboard/
+          retention-days: 30
+      
+      - name: Upload raw xcresult
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresult-${{ github.run_number }}
+          path: build/TestResults.xcresult
+          retention-days: 7
+      
+      - name: Fail job if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
