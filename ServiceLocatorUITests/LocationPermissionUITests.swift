@@ -58,7 +58,7 @@ final class LocationPermissionUITests: XCTestCase {
     /// Because simulator state persists between runs, this test may need
     /// a fresh install or privacy reset to show the banner.
     func test_permissionBanner_whenPresent_isAccessible() throws {
-        app = AppLauncher.launch(in: self, handleLocationPermission: false)
+        app = AppLauncher.launch(in: self)
         listScreen = ServiceListScreen(app: app)
         listScreen.waitForLoaded()
         

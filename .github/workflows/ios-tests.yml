@@ -47,8 +47,13 @@ jobs:
       
       - name: Install app and grant location permission
         run: |
-          APP_PATH=$(find build/DerivedData -name "ServiceLocator.app" -type d | head -1)
+          APP_PATH="build/DerivedData/Build/Products/Debug-iphonesimulator/ServiceLocator.app"
           echo "Installing $APP_PATH"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: App not found. Products dir contains:"
+            ls -la build/DerivedData/Build/Products/Debug-iphonesimulator/
+            exit 1
+          fi
           xcrun simctl install "$SIM_NAME" "$APP_PATH"
           xcrun simctl privacy "$SIM_NAME" grant location "$BUNDLE_ID"
       
