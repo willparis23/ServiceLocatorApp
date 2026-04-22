@@ -53,6 +53,12 @@ jobs:
             -resultBundlePath build/TestResults.xcresult \
             -quiet | tee build/xcodebuild.log
       
+      - name: Cleanup simulator
+        if: always()
+        run: |
+          xcrun simctl shutdown all || true
+          killall -9 Simulator || true
+      
       - name: Generate dashboard
         if: always()
         run: |
