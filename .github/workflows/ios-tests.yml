@@ -2,18 +2,16 @@ name: iOS UI Tests
  
 on:
   workflow_dispatch:
-    inputs:
-      simulator:
-        description: 'Simulator name'
-        required: false
-        default: 'iPhone 17 Pro'
-        type: string
  
 jobs:
   test:
     name: Run UI Tests
     runs-on: self-hosted
     timeout-minutes: 30
+    
+    env:
+      SIM_NAME: "iPhone 17 Pro"
+      BUNDLE_ID: "com.example.ServiceLocator"
     
     steps:
       - name: Checkout
@@ -22,37 +20,57 @@ jobs:
       - name: Show environment
         run: |
           echo "Runner: $(hostname)"
-          echo "macOS: $(sw_vers -productVersion)"
           echo "Xcode: $(xcodebuild -version | head -1)"
       
-      - name: Boot simulator
+      - name: Open Simulator app (non-headless)
         run: |
-          SIM_NAME="${{ inputs.simulator }}"
-          echo "Booting $SIM_NAME..."
-          xcrun simctl boot "$SIM_NAME" || echo "Already booted"
-          xcrun simctl bootstatus "$SIM_NAME" -b
+          open -a Simulator
+          sleep 3
       
-      - name: Configure simulator location and privacy
-        run: ./scripts/setup-simulator.sh
+      - name: Boot simulator and set location
+        run: |
+          xcrun simctl shutdown all || true
+          sleep 2
+          xcrun simctl boot "$SIM_NAME"
+          xcrun simctl bootstatus "$SIM_NAME" -b
+          xcrun simctl location "$SIM_NAME" set 34.0662,-84.6769
+      
+      - name: Build app
+        run: |
+          mkdir -p build
+          xcodebuild build-for-testing \
+            -project ServiceLocator.xcodeproj \
+            -scheme ServiceLocator \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            -derivedDataPath build/DerivedData \
+            2>&1 | tee build/build.log
+      
+      - name: Install app and grant location permission
+        run: |
+          APP_PATH=$(find build/DerivedData -name "ServiceLocator.app" -type d | head -1)
+          echo "Installing $APP_PATH"
+          xcrun simctl install "$SIM_NAME" "$APP_PATH"
+          xcrun simctl privacy "$SIM_NAME" grant location "$BUNDLE_ID"
       
       - name: Run UI tests
         id: tests
         continue-on-error: true
         run: |
-          mkdir -p build
-          xcodebuild test \
+          xcodebuild test-without-building \
             -project ServiceLocator.xcodeproj \
             -scheme ServiceLocator \
-            -destination "platform=iOS Simulator,name=${{ inputs.simulator }}" \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
             -resultBundlePath build/TestResults.xcresult \
-            -quiet | tee build/xcodebuild.log
+            -parallel-testing-enabled NO \
+            -derivedDataPath build/DerivedData \
+            2>&1 | tee build/xcodebuild.log
       
       - name: Generate dashboard
         if: always()
         run: |
           python3 scripts/generate-dashboard.py \
-            build/TestResults.xcresult \
-            build/dashboard
+            "$(pwd)/build/TestResults.xcresult" \
+            "$(pwd)/build/dashboard"
       
       - name: Upload dashboard artifact
         if: always()
@@ -61,14 +79,6 @@ jobs:
           name: test-dashboard-${{ github.run_number }}
           path: build/dashboard/
           retention-days: 30
-      
-      - name: Upload raw xcresult
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: xcresult-${{ github.run_number }}
-          path: build/TestResults.xcresult
-          retention-days: 7
       
       - name: Fail job if tests failed
         if: steps.tests.outcome == 'failure'
