@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "022D12A7-8F73-4985-96FB-D3CD275D5F54",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:ServiceLocator.xcodeproj",
+      "identifier" : "E100000001000001",
+      "name" : "ServiceLocator"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ServiceLocator.xcodeproj",
+        "identifier" : "E100000002000001",
+        "name" : "ServiceLocatorUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

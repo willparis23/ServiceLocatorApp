@@ -48,6 +48,7 @@
 		B10000000C000001 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		B10000000D000001 /* AppLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLauncher.swift; sourceTree = "<group>"; };
 		B10000000E000001 /* LocationPermissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPermissionUITests.swift; sourceTree = "<group>"; };
+		BE8AF6952F99406D0035FADB /* ServiceLocator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceLocator.xctestplan; sourceTree = "<group>"; };
 		F100000001000001 /* ServiceLocator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceLocator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F100000002000001 /* ServiceLocatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceLocatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -73,6 +74,7 @@
 		H100000001000001 = {
 			isa = PBXGroup;
 			children = (
+				BE8AF6952F99406D0035FADB /* ServiceLocator.xctestplan */,
 				H100000002000001 /* ServiceLocator */,
 				H100000003000001 /* ServiceLocatorUITests */,
 				H100000004000001 /* Products */,
@@ -433,15 +435,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		M100000001000001 /* Build configuration list for PBXProject "ServiceLocator" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				N100000001000001 /* Debug */,
-				N100000002000001 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		I100000001000001 /* Build configuration list for PBXNativeTarget "ServiceLocator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -456,6 +449,15 @@
 			buildConfigurations = (
 				N100000005000001 /* Debug */,
 				N100000006000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		M100000001000001 /* Build configuration list for PBXProject "ServiceLocator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				N100000001000001 /* Debug */,
+				N100000002000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
