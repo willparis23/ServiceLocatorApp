@@ -1,5 +1,5 @@
 name: iOS UI Tests
-
+ 
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
         required: false
         default: 'iPhone 17 Pro'
         type: string
-
+ 
 jobs:
   test:
     name: Run UI Tests
@@ -25,86 +25,27 @@ jobs:
           echo "macOS: $(sw_vers -productVersion)"
           echo "Xcode: $(xcodebuild -version | head -1)"
       
-      - name: Boot and configure simulator
+      - name: Boot simulator
         run: |
           SIM_NAME="${{ inputs.simulator }}"
-          BUNDLE_ID="com.example.ServiceLocator"
-          
-          echo "Shutting down any booted simulators..."
-          xcrun simctl shutdown all || true
-          sleep 2
-          
-          echo "Finding UDID for $SIM_NAME..."
-          SIM_UDID=$(xcrun simctl list devices available -j | python3 -c "
-          import json, sys
-          data = json.load(sys.stdin)
-          target = '$SIM_NAME'
-          for runtime, devices in data['devices'].items():
-              for device in devices:
-                  if device['name'] == target and device.get('isAvailable', False):
-                      print(device['udid'])
-                      sys.exit(0)
-          sys.exit(1)
-          ")
-          
-          if [ -z "$SIM_UDID" ]; then
-            echo "ERROR: Could not find available simulator named '$SIM_NAME'"
-            echo "Available simulators:"
-            xcrun simctl list devices available
-            exit 1
-          fi
-          
-          echo "Found UDID: $SIM_UDID"
-          echo "SIM_UDID=$SIM_UDID" >> $GITHUB_ENV
-          
-          echo "Booting..."
-          xcrun simctl boot "$SIM_UDID"
-          xcrun simctl bootstatus "$SIM_UDID" -b
-          
-          echo "Setting location..."
-          xcrun simctl location "$SIM_UDID" set 34.0662,-84.6769
-          
-          echo "Building app..."
-          xcodebuild build-for-testing \
-            -project ServiceLocator.xcodeproj \
-            -scheme ServiceLocator \
-            -destination "platform=iOS Simulator,id=$SIM_UDID" \
-            -derivedDataPath build/DerivedData \
-            2>&1 | tee build/build.log
-          
-          echo "Installing app..."
-          APP_PATH=$(find build/DerivedData -name "ServiceLocator.app" -type d | head -1)
-          if [ -z "$APP_PATH" ]; then
-            echo "ERROR: Could not find ServiceLocator.app after build"
-            find build/DerivedData -name "*.app" -type d
-            exit 1
-          fi
-          xcrun simctl install "$SIM_UDID" "$APP_PATH"
-          
-          echo "Granting location permission..."
-          xcrun simctl privacy "$SIM_UDID" grant location "$BUNDLE_ID"
-          
-          echo "Setup complete."
+          echo "Booting $SIM_NAME..."
+          xcrun simctl boot "$SIM_NAME" || echo "Already booted"
+          xcrun simctl bootstatus "$SIM_NAME" -b
+      
+      - name: Configure simulator location and privacy
+        run: ./scripts/setup-simulator.sh
       
       - name: Run UI tests
         id: tests
         continue-on-error: true
         run: |
           mkdir -p build
-          xcodebuild test-without-building \
+          xcodebuild test \
             -project ServiceLocator.xcodeproj \
             -scheme ServiceLocator \
-            -destination "platform=iOS Simulator,id=$SIM_UDID" \
+            -destination "platform=iOS Simulator,name=${{ inputs.simulator }}" \
             -resultBundlePath build/TestResults.xcresult \
-            -parallel-testing-enabled NO \
-            -derivedDataPath build/DerivedData \
-            2>&1 | tee build/xcodebuild.log
-      
-      - name: Cleanup simulator
-        if: always()
-        run: |
-          xcrun simctl shutdown all || true
-          killall -9 Simulator || true
+            -quiet | tee build/xcodebuild.log
       
       - name: Generate dashboard
         if: always()
