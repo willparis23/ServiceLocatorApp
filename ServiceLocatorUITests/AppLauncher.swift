@@ -13,30 +13,13 @@ import XCTest
 ///
 /// Or use a GPX file in the scheme's Options tab.
 struct AppLauncher {
-    
-    /// Launches the app with an interruption monitor that auto-taps
-    /// "Allow Once" on the system location permission alert if it appears.
-    /// Pass `handleLocationPermission: false` to suppress the auto-grant
-    /// (e.g. when testing the in-app permission banner).
-    static func launch(
-        in testCase: XCTestCase,
-        handleLocationPermission: Bool = true
-    ) -> XCUIApplication {
+
+    static func launch(in testCase: XCTestCase) -> XCUIApplication {
         let app = XCUIApplication()
-        
-        if handleLocationPermission {
-            installLocationPermissionHandler(in: testCase)
-        }
-        
         app.launch()
-        
-        // Nudge the app so the interruption monitor fires if an alert
-        // is already on screen. This is XCUITest's documented pattern.
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.0)).tap()
-        
         return app
     }
-    
+
     private static func installLocationPermissionHandler(in testCase: XCTestCase) {
         _ = testCase.addUIInterruptionMonitor(withDescription: "Location Permission") { alert in
             let allowButtons = [
