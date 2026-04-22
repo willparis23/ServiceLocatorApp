@@ -28,9 +28,15 @@ jobs:
       - name: Boot simulator
         run: |
           SIM_NAME="${{ inputs.simulator }}"
+          echo "Shutting down any previously booted simulators..."
+          xcrun simctl shutdown all || true
+          
           echo "Booting $SIM_NAME..."
-          xcrun simctl boot "$SIM_NAME" || echo "Already booted"
+          xcrun simctl boot "$SIM_NAME"
           xcrun simctl bootstatus "$SIM_NAME" -b
+          
+          echo "Currently booted:"
+          xcrun simctl list devices booted
       
       - name: Configure simulator location and privacy
         run: ./scripts/setup-simulator.sh
