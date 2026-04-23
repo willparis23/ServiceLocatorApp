@@ -3,32 +3,20 @@ import XCTest
 /// Accessibility tests that validate the app is usable by everyone.
 /// Assertions are data-agnostic — they iterate over whatever rows
 /// the provider actually rendered rather than checking specific names.
-final class AccessibilityUITests: XCTestCase {
-    var app: XCUIApplication!
-    var listScreen: ServiceListScreen!
-    
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-        app = AppLauncher.launch(in: self)
-        listScreen = ServiceListScreen(app: app)
-        listScreen.waitForLoaded()
-    }
-    
-    override func tearDownWithError() throws {
-        app = nil
-        listScreen = nil
-    }
+final class AccessibilityUITests: BaseClass {
     
     // MARK: - Label Coverage
-    
-    func test_allInteractiveButtons_haveNonEmptyAccessibilityLabels() {
+
+    // Verifying that all buttons on the screen have accessibility labels
+    func test_allInteractiveButtonsHaveNonEmptyAccessibilityLabels() {
         let buttons = app.buttons.allElementsBoundByIndex
         
         // Only check the first 6 buttons to avoid off-screen elements
         // that may not have valid activation points
         let buttonsToCheck = Array(buttons.prefix(5))
         var checkedCount = 0
-        
+
+        // Making sure that each visible button has an associated accessibility label
         for button in buttonsToCheck where button.exists {
             XCTAssertFalse(
                 button.label.isEmpty,
@@ -40,18 +28,17 @@ final class AccessibilityUITests: XCTestCase {
         // Ensure we actually tested some buttons
         XCTAssertGreaterThan(checkedCount, 0, "Should have found at least one button to test")
     }
-    
-    func test_searchField_hasAccessibilityLabel() {
+
+    // Verifying that the search field has an accessibility label
+    func test_searchFieldHasAccessibilityLabel() {
         XCTAssertEqual(listScreen.searchField.label, "Search services")
     }
     
     // MARK: - Trait Verification
-    
-    func test_categoryChip_announcesSelectedState_forAnyRenderedCategory() {
-        guard let firstRow = listScreen.visibleRows().first else {
-            XCTFail("Expected at least one row")
-            return
-        }
+
+    // Verifying that user selected category has an isSelected accessibility trait
+    func test_categoryChipHasSelectedStateForAnyRenderedCategory() {
+        let firstRow = listScreen.waitForFirstRowToRender()
         let targetCategory = firstRow.category
         listScreen.selectCategory(targetCategory)
         
@@ -62,10 +49,8 @@ final class AccessibilityUITests: XCTestCase {
     
     // MARK: - Combined Element Labels
     
-    /// Every rendered row must have an accessibility label combining the
-    /// name, category, and distance into a single announcement — validated
-    /// for whatever rows are actually on screen rather than a hardcoded one.
-    func test_everyRenderedRow_combinesInfoIntoSingleAccessibleElement() {
+    // Verifying that each row has an accessibility identifier/label that combines all row info
+    func test_everyRenderedRowCombinesInfoIntoSingleAccessibleElement() {
         listScreen.waitForDistancesToResolve()
         let rows = listScreen.visibleRows()
         XCTAssertFalse(rows.isEmpty)
@@ -80,8 +65,9 @@ final class AccessibilityUITests: XCTestCase {
     }
     
     // MARK: - Detail Screen
-    
-    func test_detailScreen_allInfoSectionsHaveLabels() {
+
+    // Verifying that all info sections on the detail screen have accessibility labels
+    func test_allDetailScreenInfoSectionsHaveLabels() {
         let detail = listScreen.tapFirstService()
         detail.waitForScreen()
         
@@ -89,8 +75,9 @@ final class AccessibilityUITests: XCTestCase {
         XCTAssertTrue(detail.phoneSection.label.contains("Phone"))
         XCTAssertTrue(detail.hoursSection.label.contains("Hours"))
     }
-    
-    func test_detailScreen_actionButtonsHaveLabels() {
+
+    // Verifying that all action buttons on the detail screen have accessibility labels
+    func test_allDetailScreenActionButtonsHaveLabels() {
         let detail = listScreen.tapFirstService()
         detail.waitForScreen()
         
@@ -99,15 +86,21 @@ final class AccessibilityUITests: XCTestCase {
     }
     
     // MARK: - Dynamic Type
-    
-    func test_app_launchesWithLargestAccessibilityTextSize() {
+
+    // Verifying that the app can launch with different text size and that rows still display
+    func test_appLaunchesWithLargestAccessibilityTextSize() throws {
+        // Terminate the existing app instance from setUp
+        app.terminate()
+        
+        // Create a new app instance with accessibility text size
         app = XCUIApplication()
         app.launchArguments = [
             "-UIPreferredContentSizeCategoryName",
             "UICTContentSizeCategoryAccessibilityXXXL"
         ]
         app.launch()
-        listScreen = ServiceListScreen(app: app)
+        
+        // Wait for the list screen to load using the existing screen reference
         listScreen.waitForLoaded()
         
         XCTAssertTrue(listScreen.screen.exists)

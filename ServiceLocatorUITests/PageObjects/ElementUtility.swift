@@ -1,12 +1,8 @@
 import XCTest
 
-class BaseScreen {
-    let app: XCUIApplication
+struct ElementUtility {
+
     let defaultTimeout: TimeInterval = 5.0
-    
-    init(app: XCUIApplication) {
-        self.app = app
-    }
 
     func waitForElement(
         _ element: XCUIElement,

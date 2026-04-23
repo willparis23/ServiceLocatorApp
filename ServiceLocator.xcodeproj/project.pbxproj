@@ -13,14 +13,13 @@
 		A100000004000001 /* ServiceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000004000001 /* ServiceListViewModel.swift */; };
 		A100000005000001 /* ServiceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000005000001 /* ServiceListView.swift */; };
 		A100000006000001 /* ServiceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000006000001 /* ServiceDetailView.swift */; };
-		A100000007000001 /* BaseScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000007000001 /* BaseScreen.swift */; };
+		A100000007000001 /* ElementUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000007000001 /* ElementUtility.swift */; };
 		A100000008000001 /* ServiceListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000008000001 /* ServiceListScreen.swift */; };
 		A100000009000001 /* ServiceDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000009000001 /* ServiceDetailScreen.swift */; };
 		A10000000A000001 /* ServiceListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000A000001 /* ServiceListUITests.swift */; };
 		A10000000B000001 /* AccessibilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000B000001 /* AccessibilityUITests.swift */; };
 		A10000000C000001 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000C000001 /* LocationProvider.swift */; };
-		A10000000D000001 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000D000001 /* AppLauncher.swift */; };
-		A10000000E000001 /* LocationPermissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000E000001 /* LocationPermissionUITests.swift */; };
+		BEF374D52F99AEC8008B41B0 /* BaseClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF374D42F99AEC8008B41B0 /* BaseClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,15 +39,14 @@
 		B100000004000001 /* ServiceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListViewModel.swift; sourceTree = "<group>"; };
 		B100000005000001 /* ServiceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListView.swift; sourceTree = "<group>"; };
 		B100000006000001 /* ServiceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailView.swift; sourceTree = "<group>"; };
-		B100000007000001 /* BaseScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScreen.swift; sourceTree = "<group>"; };
+		B100000007000001 /* ElementUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementUtility.swift; sourceTree = "<group>"; };
 		B100000008000001 /* ServiceListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListScreen.swift; sourceTree = "<group>"; };
 		B100000009000001 /* ServiceDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailScreen.swift; sourceTree = "<group>"; };
 		B10000000A000001 /* ServiceListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListUITests.swift; sourceTree = "<group>"; };
 		B10000000B000001 /* AccessibilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUITests.swift; sourceTree = "<group>"; };
 		B10000000C000001 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
-		B10000000D000001 /* AppLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLauncher.swift; sourceTree = "<group>"; };
-		B10000000E000001 /* LocationPermissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPermissionUITests.swift; sourceTree = "<group>"; };
 		BE8AF6952F99406D0035FADB /* ServiceLocator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceLocator.xctestplan; sourceTree = "<group>"; };
+		BEF374D42F99AEC8008B41B0 /* BaseClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClass.swift; sourceTree = "<group>"; };
 		F100000001000001 /* ServiceLocator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceLocator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F100000002000001 /* ServiceLocatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceLocatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -96,11 +94,10 @@
 		H100000003000001 /* ServiceLocatorUITests */ = {
 			isa = PBXGroup;
 			children = (
+				BEF374D42F99AEC8008B41B0 /* BaseClass.swift */,
 				H100000009000001 /* PageObjects */,
-				B10000000D000001 /* AppLauncher.swift */,
 				B10000000A000001 /* ServiceListUITests.swift */,
 				B10000000B000001 /* AccessibilityUITests.swift */,
-				B10000000E000001 /* LocationPermissionUITests.swift */,
 			);
 			path = ServiceLocatorUITests;
 			sourceTree = "<group>";
@@ -151,7 +148,7 @@
 		H100000009000001 /* PageObjects */ = {
 			isa = PBXGroup;
 			children = (
-				B100000007000001 /* BaseScreen.swift */,
+				B100000007000001 /* ElementUtility.swift */,
 				B100000008000001 /* ServiceListScreen.swift */,
 				B100000009000001 /* ServiceDetailScreen.swift */,
 			);
@@ -262,13 +259,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A100000007000001 /* BaseScreen.swift in Sources */,
+				A100000007000001 /* ElementUtility.swift in Sources */,
 				A100000008000001 /* ServiceListScreen.swift in Sources */,
+				BEF374D52F99AEC8008B41B0 /* BaseClass.swift in Sources */,
 				A100000009000001 /* ServiceDetailScreen.swift in Sources */,
-				A10000000D000001 /* AppLauncher.swift in Sources */,
 				A10000000A000001 /* ServiceListUITests.swift in Sources */,
 				A10000000B000001 /* AccessibilityUITests.swift in Sources */,
-				A10000000E000001 /* LocationPermissionUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

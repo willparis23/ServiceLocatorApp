@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8BE5A7B6-901F-4E09-A51F-792CA66EF47E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ServiceLocatorUITests/AccessibilityUITests.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
-            landmarkName = "AccessibilityUITests"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "786BA143-4A6D-419D-A929-854C528C0662"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -30,9 +14,9 @@
             filePath = "ServiceLocatorUITests/AccessibilityUITests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "test_everyRenderedRow_combinesInfoIntoSingleAccessibleElement()"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "test_everyRenderedRowCombinesInfoIntoSingleAccessibleElement()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -46,9 +30,9 @@
             filePath = "ServiceLocatorUITests/AccessibilityUITests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "test_detailScreen_allInfoSectionsHaveLabels()"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "test_allDetailScreenInfoSectionsHaveLabels()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -62,9 +46,9 @@
             filePath = "ServiceLocatorUITests/AccessibilityUITests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "test_detailScreen_allInfoSectionsHaveLabels()"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "test_allDetailScreenInfoSectionsHaveLabels()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -78,9 +62,9 @@
             filePath = "ServiceLocatorUITests/AccessibilityUITests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "test_allInteractiveButtons_haveNonEmptyAccessibilityLabels()"
+            startingLineNumber = "11"
+            endingLineNumber = "11"
+            landmarkName = "test_allInteractiveButtonsHaveNonEmptyAccessibilityLabels()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1,6 +1,12 @@
 import XCTest
 
-final class ServiceDetailScreen: BaseScreen {
+final class ServiceDetailScreen {
+    
+    let app: XCUIApplication
+    
+    init(app: XCUIApplication) {
+        self.app = app
+    }
     
     // MARK: - Elements
     
@@ -51,18 +57,10 @@ final class ServiceDetailScreen: BaseScreen {
     // MARK: - Actions
 
     func waitForScreen() {
-        _ = waitForElement(screen)
+        _ = ElementUtility().waitForElement(screen)
     }
 
     func goBack() {
         backButton.tap()
-    }
-
-    func tapCall() {
-        callButton.tap()
-    }
-
-    func tapDirections() {
-        directionsButton.tap()
     }
 }
