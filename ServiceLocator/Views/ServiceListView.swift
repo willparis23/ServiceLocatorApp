@@ -8,18 +8,41 @@ struct ServiceListView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                headerSection
                 locationBanner
                 searchBar
                 categoryFilter
                 contentArea
             }
-            .navigationTitle("Find Services")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadServices()
             }
         }
         .accessibilityIdentifier("serviceListScreen")
+    }
+    
+    private var headerSection: some View {
+        VStack(spacing: 12) {
+            Text("Find Services")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            ZStack {
+                Circle()
+                    .fill(Color.accentColor.opacity(0.15))
+                    .frame(width: 60, height: 60)
+                
+                Image(systemName: "mappin.and.ellipse")
+                    .font(.system(size: 32))
+                    .foregroundStyle(Color.accentColor)
+            }
+            .accessibilityLabel("App Logo")
+        }
+        .padding(.vertical, 16)
+        .background(Color(.systemBackground))
     }
     
     @ViewBuilder
@@ -105,8 +128,7 @@ struct ServiceListView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .padding(.horizontal)
-        .padding(.top, 8)
-        .padding(.bottom, 8)
+        .padding(.vertical, 12)
     }
     
     private var categoryFilter: some View {
