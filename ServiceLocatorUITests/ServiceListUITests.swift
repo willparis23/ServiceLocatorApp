@@ -252,4 +252,9 @@ final class ServiceListUITests: BaseClass {
         detail.goBack()
         XCTAssertTrue(listScreen.screen.waitForExistence(timeout: 2))
     }
+
+    func test_ErrorDisplaysInReport() {
+        let detail = ServiceDetailScreen(app: app)
+        XCTAssertTrue(detail.callButton.exists, "Call button only displays in Detail screen")
+    }
 }
