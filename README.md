@@ -1,149 +1,124 @@
 # ServiceLocator
 
-A civic tech iOS app that helps people find nearby social services — food assistance, housing support, mental health resources, healthcare, and employment help — in the Atlanta metro area.
+An iOS automation showcase project. The app is a civic-tech service locator for the Atlanta metro area — food assistance, housing support, mental health resources, healthcare, and employment help — but the focus of this repo is the test suite and CI pipeline around it.
 
-Built as a showcase of SwiftUI architecture and XCUITest automation practices, with a specific focus on real-system integration, accessibility, and honest tradeoffs.
+The goal of this project is to demonstrate how I design an XCUITest automation suite from scratch: page object model, data-agnostic assertions, real system integration, and continuous integration with a reporting dashboard.
 
-## Why This App
+## The App (In Brief)
 
-When software serves people in vulnerable moments, quality is not just a technical concern — it is part of how you treat people. This project demonstrates that belief through both the product and the tests.
+SwiftUI + MVVM, with a `LocationProviding` protocol abstracting Core Location and a `ServiceProviding` protocol abstracting the data source. The UI includes:
 
-## Architecture
+- A list of services with search and category filtering
+- Distance-based sorting using `CLLocation.distance(from:)`
+- A detail screen for each service
+- Full VoiceOver / Dynamic Type accessibility support
 
-### Protocol-Oriented Services
+Real Atlanta-metro services (MUST Ministries, Atlanta Community Food Bank, Grady, Covenant House, and others) with accurate coordinates are served in-memory through `MockServiceProvider`. Because `ServiceProviding` is a protocol, swapping in a real HSDS/211 network provider is a one-file change.
 
-Two protocols sit at the core of the app:
-
-- `ServiceProviding` abstracts where service data comes from
-- `LocationProviding` abstracts how we get the user's location
-
-`CoreLocationProvider` is the production implementation backed by `CLLocationManager`. Tests run against this real provider, exercising the actual permission flow and the real distance calculation pipeline end to end.
-
-### MVVM with Combine
-
-`ServiceListViewModel` owns all state and filtering logic. Views are thin renderers that bind to published properties. This separation keeps view code declarative and business logic directly unit-testable.
-
-### Real Distance Calculation
-
-Services are stored with latitude and longitude. When the user's location is available, the view model sorts the service list by real-world proximity using `CLLocation.distance(from:)`. When it is not available, results are shown without distances.
-
-## Project Structure
-
-```
-ServiceLocator/
-├── Models/              Service with CoreLocation coordinates
-├── ViewModels/          ServiceListViewModel (Combine + location state)
-├── Views/               ServiceListView, ServiceDetailView
-└── Services/
-    ├── ServiceProvider  ServiceProviding + MockServiceProvider
-    └── LocationProvider LocationProviding + CoreLocationProvider
-
-ServiceLocatorUITests/
-├── AppLauncher                  Launches app and handles system permission alert
-├── PageObjects/                 BaseScreen, ServiceListScreen, ServiceDetailScreen
-├── ServiceListUITests           Happy path, search, filter, navigation, proximity sorting
-├── LocationPermissionUITests    Real permission dialog flow
-└── AccessibilityUITests         Label coverage, traits, Dynamic Type
-
-scripts/
-└── setup-simulator.sh           Configures simulator location and privacy
-```
-
-## A Note on Data
-
-The civic tech standard for social services data is Open Referral HSDS (Human Services Data Specification), used by 211 providers and many city governments. There is no free nationwide endpoint — each locality runs its own, and most require partnership agreements.
-
-Rather than forcing a lower-quality API integration, this app uses a curated set of real Atlanta-metro services (MUST Ministries, Atlanta Community Food Bank, Grady, Covenant House, and others) with accurate addresses and coordinates. The data is served through the `ServiceProviding` protocol, so swapping in an `HSDSNetworkProvider` against a real 211 endpoint is a one-file change.
-
-## Test Strategy
-
-### Real Core Location, Real Permission Flow
-
-The UI test suite does not mock location. Tests run against `CoreLocationProvider`, use the simulator's configured location, and tap through the real iOS permissions alert via `addUIInterruptionMonitor`. This approach validates the full location pipeline — permission handling, fix acquisition, distance calculation, and sorted rendering — end to end.
-
-This is a deliberate choice. It trades some determinism for realism: the same code paths that run in production also run in tests.
+## Test Architecture
 
 ### Page Object Model
 
-All element queries live in screen objects. Tests read like user stories and stay stable when UI changes.
-
-### Coverage Areas
-
-- Happy path — loading, displaying, and navigating the service list
-- Search — filtering by name, clearing, empty states
-- Category filtering — selection, deselection, restoration
-- Navigation — list-to-detail and back
-- Proximity sorting — verifying Cobb County services appear before downtown Atlanta services when the user is in Acworth
-- Distance calculation accuracy — verifying computed mileage is within expected ranges
-- Real location permission flow — system alert auto-tapped via interruption monitor
-- Accessibility — label completeness, selected-state announcements, Dynamic Type, combined elements
-
-## Running the Tests
-
-### First-Time Setup
-
-Before running the suite, configure the simulator:
-
-```bash
-./scripts/setup-simulator.sh
-```
-
-This sets the simulator location to Acworth, GA (34.0662, -84.6769) and resets the app's location privacy so the permission alert appears on first launch.
-
-You can also do this manually:
-
-```bash
-xcrun simctl location booted set 34.0662,-84.6769
-xcrun simctl privacy booted reset location com.example.ServiceLocator
-```
-
-### Run the Tests
-
-Open `ServiceLocator.xcodeproj` in Xcode, then:
+All element queries live in screen objects — `ServiceListScreen` and `ServiceDetailScreen`. Tests never touch `XCUIApplication` directly; they call methods on the screen objects. When the UI changes, updates happen in one place.
 
 ```
-Cmd + U
+ServiceLocatorUITests/
+├── BaseClass.swift             Shared setup/teardown (app launch, listScreen init)
+├── PageObjects/
+│   ├── ElementUtility.swift    waitForElement / waitForDisappearance helpers
+│   ├── ServiceListScreen.swift List screen + RenderedServiceRow parser
+│   └── ServiceDetailScreen.swift Detail screen elements and actions
+├── ServiceListUITests.swift    Main functional coverage
+└── AccessibilityUITests.swift  Accessibility-focused coverage
 ```
 
-Or from the command line:
+`BaseClass` extends `XCTestCase` and handles app launch, screen initialization, and the loading wait. Every test class inherits from it so individual tests stay focused on what they're asserting, not on setup boilerplate.
 
-```bash
-xcodebuild test \
-  -project ServiceLocator.xcodeproj \
-  -scheme ServiceLocator \
-  -destination 'platform=iOS Simulator,name=iPhone 15'
+### Data-Agnostic Assertions
+
+The test suite does not hardcode any service names. Instead, rows are harvested from the accessibility tree at runtime through a `RenderedServiceRow` struct that parses each row's accessibility label:
+
+```
+"MUST Ministries..., Food Assistance, 12.3 miles away"
+  ↓
+RenderedServiceRow(name: "MUST Ministries...", category: "Food Assistance", distanceMiles: 12.3)
 ```
 
-## Troubleshooting
+Tests assert on **contracts** — "every row has a non-empty name", "rows are sorted in ascending distance order", "every rendered category is drawn from the known chip set". This means the suite continues to work if the underlying data source changes, which is exactly what we'd want when swapping in a real HSDS/211 provider.
 
-### Permission alert is not being dismissed
+### Real System Integration
 
-`addUIInterruptionMonitor` only fires after the next user interaction, so `AppLauncher` calls `app.tap()` right after launch. If the alert still lingers:
+The suite runs against the real `CLLocationManager` rather than a mocked location provider. The full permission → distance calculation → sort pipeline is exercised end to end. This catches bugs that mocks would miss — permission state handling, delegate callbacks, the moment a distance string actually appears on a row.
 
-- Confirm the simulator language is English (alert button labels depend on locale)
-- Try resetting privacy: `xcrun simctl privacy booted reset location com.example.ServiceLocator`
-- On some Xcode versions the monitor is flaky on first install — a second run usually succeeds
+The CI pipeline pre-grants location permission silently before the test run (see below), so no dialog interaction is needed.
 
-### Distance rows never appear
+## Test Coverage
 
-This typically means the simulator does not have a location set. Run:
+### Functional (`ServiceListUITests`)
 
-```bash
-xcrun simctl location booted set 34.0662,-84.6769
-```
+| Area | Tests |
+|------|-------|
+| Happy path | Rows render; names, categories, and distances are populated; categories are from the known set |
+| Search | Filtering reduces row count, filtered rows contain the search term, empty state on no match, clear restores list |
+| Category filtering | Selecting a category shows only matching rows, "All" chip restores full list |
+| Location sorting | Rows are in ascending distance order, closest service is within 50 miles (sanity check) |
+| Navigation | Tapping a row opens the detail screen with matching name/category/distance, back returns to list |
 
-Or open Features → Location → Custom Location in the simulator menu bar.
+### Accessibility (`AccessibilityUITests`)
 
-### Proximity test fails
+| Area | Tests |
+|------|-------|
+| Label coverage | Every visible interactive button has a non-empty label, search field has a proper label |
+| Traits | Selected category chip reports `isSelected=true` to VoiceOver |
+| Combined elements | Every row combines name + category + distance into a single accessible announcement |
+| Detail screen | All info sections and action buttons have meaningful labels |
+| Dynamic Type | App launches and renders at the largest accessibility text size |
 
-Check that the simulator location is actually Acworth. If it reports a different city, reset and re-run `setup-simulator.sh`.
+## Continuous Integration
+
+`.github/workflows/ios-tests.yml` runs the full suite on a self-hosted macOS runner and uploads a static HTML dashboard summarizing results.
+
+### Pipeline Stages
+
+1. **Checkout** the repo
+2. **Show environment** — runner hostname and Xcode version for debugging
+3. **Open Simulator app** (non-headless — the simulator window is visible so the run can be watched)
+4. **Boot simulator and set location** — boots iPhone 17 Pro and sets GPS to Acworth, GA
+5. **Build app** — `xcodebuild build-for-testing`, output into `build/DerivedData`
+6. **Install app and grant location** — installs the built app onto the simulator and calls `xcrun simctl privacy grant location` so no permission dialog ever appears during the test run
+7. **Run UI tests** — `xcodebuild test-without-building` with `-parallel-testing-enabled NO` and result bundle output at `build/TestResults.xcresult`
+8. **Generate dashboard** — Python script parses the xcresult bundle and renders an HTML summary
+9. **Upload dashboard artifact** — the dashboard directory is uploaded as a workflow artifact available for 30 days
+
+### Why This Shape
+
+**Self-hosted runner** — iOS UI tests need a real macOS environment with Xcode and a simulator. A Mac mini at home is free, fast, and doesn't compete for GitHub's macOS runner minutes.
+
+**Manual trigger only** (`workflow_dispatch`) — self-hosted runners on public repos are a security risk because a PR from anyone could run arbitrary code on the runner. Restricting to manual trigger means only the repo owner can run the workflow.
+
+**Build once, test once** — splitting `build-for-testing` and `test-without-building` allows installing and configuring the app (granting location permission) between build and test. This is the standard pattern for avoiding permission dialog interaction in CI.
+
+**Sequential execution** — `-parallel-testing-enabled NO` keeps the suite deterministic. For a suite this small, parallelization would add flake risk without saving meaningful time.
+
+### Dashboard
+
+The dashboard is a standalone `index.html` rendered by `scripts/generate-dashboard.py`. It parses the `.xcresult` bundle using `xcresulttool get test-results summary` (Xcode 16+) with a fallback to the legacy command.
+
+It shows:
+
+- Overall status banner — PASSING / FAILING / NO RESULTS
+- Pass / fail / skipped / total counts as cards
+- Pass rate with a progress bar
+- Failure details (test name, target, message) for any failing tests
+- Run metadata (commit, branch, run number, triggered by)
+
+The dashboard is uploaded as a workflow artifact per run. It can be downloaded from the GitHub Actions page and opened locally.
 
 ## What I Would Add With More Time
 
-- A real `HSDSNetworkProvider` against a partner 211 endpoint
-- Snapshot tests for visual regression
-- GitHub Actions CI with an automated pre-test step to configure the simulator
-- Unit tests for `ServiceListViewModel` (testing business logic in isolation complements the end-to-end UI tests)
-- Localization (Spanish at minimum)
-- Apple Maps integration for the Directions button
-- Offline caching
+- A real `HSDSNetworkProvider` against a partner 211 endpoint, demonstrating the test suite works unchanged across implementations
+- GitHub Pages hosting for the dashboard instead of download-only artifacts
+- Historical trend data on the dashboard (last N runs, pass-rate over time)
+- Make the Call and Directions action buttons in the Service Detail screen functional
+- Automating testing the app when location permissions are denied (currently flaky with Apple permission popups)
+
