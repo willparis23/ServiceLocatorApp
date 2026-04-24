@@ -6,7 +6,7 @@ class BaseClass: XCTestCase {
     var app: XCUIApplication!
     var listScreen: ServiceListScreen!
     
-    override func setUp() throws {
+    override func setUp() {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launch()
@@ -14,8 +14,7 @@ class BaseClass: XCTestCase {
         listScreen.waitForLoaded()
     }
     
-    override func tearDown() throws {
-        app = nil
-        listScreen = nil
+    override func tearDown() {
+        app.terminate()
     }
 }
