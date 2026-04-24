@@ -13,7 +13,6 @@
 		A100000004000001 /* ServiceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000004000001 /* ServiceListViewModel.swift */; };
 		A100000005000001 /* ServiceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000005000001 /* ServiceListView.swift */; };
 		A100000006000001 /* ServiceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000006000001 /* ServiceDetailView.swift */; };
-		A100000007000001 /* ElementUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000007000001 /* ElementUtility.swift */; };
 		A100000008000001 /* ServiceListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000008000001 /* ServiceListScreen.swift */; };
 		A100000009000001 /* ServiceDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000009000001 /* ServiceDetailScreen.swift */; };
 		A10000000C000001 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000C000001 /* LocationProvider.swift */; };
@@ -37,7 +36,6 @@
 		B100000004000001 /* ServiceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListViewModel.swift; sourceTree = "<group>"; };
 		B100000005000001 /* ServiceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListView.swift; sourceTree = "<group>"; };
 		B100000006000001 /* ServiceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailView.swift; sourceTree = "<group>"; };
-		B100000007000001 /* ElementUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementUtility.swift; sourceTree = "<group>"; };
 		B100000008000001 /* ServiceListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListScreen.swift; sourceTree = "<group>"; };
 		B100000009000001 /* ServiceDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailScreen.swift; sourceTree = "<group>"; };
 		B10000000C000001 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
@@ -49,6 +47,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BEAA6A712F9BA74D00344DA7 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		BEAA6A762F9BD9EA00344DA7 /* UtilityFunctions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UtilityFunctions; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,9 +93,10 @@
 		H100000003000001 /* ServiceLocatorUITests */ = {
 			isa = PBXGroup;
 			children = (
-				BEF374D42F99AEC8008B41B0 /* BaseClass.swift */,
 				BEAA6A712F9BA74D00344DA7 /* Tests */,
 				H100000009000001 /* PageObjects */,
+				BEAA6A762F9BD9EA00344DA7 /* UtilityFunctions */,
+				BEF374D42F99AEC8008B41B0 /* BaseClass.swift */,
 			);
 			path = ServiceLocatorUITests;
 			sourceTree = "<group>";
@@ -147,7 +147,6 @@
 		H100000009000001 /* PageObjects */ = {
 			isa = PBXGroup;
 			children = (
-				B100000007000001 /* ElementUtility.swift */,
 				B100000008000001 /* ServiceListScreen.swift */,
 				B100000009000001 /* ServiceDetailScreen.swift */,
 			);
@@ -188,6 +187,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				BEAA6A712F9BA74D00344DA7 /* Tests */,
+				BEAA6A762F9BD9EA00344DA7 /* UtilityFunctions */,
 			);
 			name = ServiceLocatorUITests;
 			productName = ServiceLocatorUITests;
@@ -261,7 +261,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A100000007000001 /* ElementUtility.swift in Sources */,
 				A100000008000001 /* ServiceListScreen.swift in Sources */,
 				BEF374D52F99AEC8008B41B0 /* BaseClass.swift in Sources */,
 				A100000009000001 /* ServiceDetailScreen.swift in Sources */,
