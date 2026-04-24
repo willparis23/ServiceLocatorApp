@@ -125,6 +125,53 @@ final class ServiceListUITests: BaseClass {
             "Clearing the search should restore the original row count"
         )
     }
+
+    // Verifying that search is case-insensitive by searching with opposite case
+    func test_searchIsCaseInsensitive() {
+        let firstRow = listScreen.waitForFirstRowToRender()
+        
+        // Take the first word of the first row's name and flip its case
+        // If the original is "Atlanta", search for "ATLANTA" (or vice versa)
+        let originalTerm = firstRow.name.components(separatedBy: " ").first ?? firstRow.name
+        let flippedCaseTerm = originalTerm == originalTerm.uppercased()
+        ? originalTerm.lowercased()
+        : originalTerm.uppercased()
+
+        listScreen.search(for: flippedCaseTerm)
+        
+        // The original row should still appear even though case doesn't match
+        XCTAssertTrue(
+            listScreen.serviceRowExists(named: firstRow.name),
+            "Search should be case-insensitive. Row '\(firstRow.name)' should appear when searching '\(flippedCaseTerm)'"
+        )
+    }
+
+    // Verifying that typing into search then deleting back to empty restores full list
+    func test_typingThenDeletingSearchRestoresFullList() {
+        let initialServiceList = listScreen.visibleRows()
+        let firstRow = listScreen.waitForFirstRowToRender()
+        
+        // Type a search term and verify the list is filtered by the search term
+        listScreen.search(for: firstRow.name.components(separatedBy: " ").first ?? firstRow.name)
+        let filteredServiceList = listScreen.visibleRows()
+        XCTAssertNotEqual(initialServiceList, filteredServiceList)
+        
+        // Delete the search character by character
+        let searchField = listScreen.searchField
+        searchField.tap()
+        if let currentText = searchField.value as? String, !currentText.isEmpty {
+            for _ in 0..<currentText.count {
+                searchField.typeText(XCUIKeyboardKey.delete.rawValue)
+            }
+        }
+        
+        // Full list should restore
+        XCTAssertEqual(
+            listScreen.visibleRows(),
+            initialServiceList,
+            "Deleting all search characters should restore the full list"
+        )
+    }
     
     // MARK: - Category Filtering
 
@@ -168,6 +215,32 @@ final class ServiceListUITests: BaseClass {
 
         // verifying that tapping "All" button restores rows to pre-filtered state
         XCTAssertEqual(listScreen.visibleServiceCount(), initialCount, "Tapping 'All' should restore the original row count")
+    }
+
+    // Verifying that clearing search after applying a category filter preserves the category filter
+    func test_clearingSearchAfterFilteringPreservesCategory() {
+        let firstRow = listScreen.waitForFirstRowToRender()
+        let targetCategory = firstRow.category
+        
+        // Apply category filter
+        listScreen.selectCategory(targetCategory)
+        let rowsWithCategoryOnly = listScreen.visibleRows()
+        
+        // Apply search on top
+        let searchTerm = firstRow.name.components(separatedBy: " ").first ?? firstRow.name
+        listScreen.search(for: searchTerm)
+        
+        // Clear only the search
+        listScreen.clearSearch()
+        
+        // Category filter should still be active, verify same rows are displayed and that category is still selected
+        let rowsAfterClearingSearch = listScreen.visibleRows()
+        XCTAssertEqual(
+            rowsAfterClearingSearch,
+            rowsWithCategoryOnly,
+            "Clearing search should not remove category filter"
+        )
+        XCTAssertTrue(app.buttons[targetCategory].isSelected)
     }
     
     // MARK: - Location-Based Sorting
@@ -253,6 +326,34 @@ final class ServiceListUITests: BaseClass {
         XCTAssertTrue(listScreen.screen.waitForExistence(timeout: 2))
     }
 
+    // Verifying that navigating to detail and back preserves the filtered list state
+    func test_navigatingToDetailAndBackPreservesSearchState() {
+        let firstRow = listScreen.waitForFirstRowToRender()
+        let searchTerm = firstRow.name.components(separatedBy: " ").first ?? firstRow.name
+
+        // search for a service and take the list of services after searching but before navigating to detail screen
+        listScreen.search(for: searchTerm)
+        let listBeforeNav = listScreen.visibleRows()
+        
+        // Navigate to detail screen
+        let detail = listScreen.tapFirstService()
+        detail.waitForScreen()
+        
+        // Navigate back to list screen and store the list of services after navigating back
+        detail.goBack()
+        XCTAssertTrue(listScreen.screen.waitForExistence(timeout: 2))
+        let listAfterNav = listScreen.visibleRows()
+        
+        // Search state should be preserved (search term and list of services)
+        XCTAssertEqual(
+            listBeforeNav,
+            listAfterNav,
+            "Search filter should be preserved after navigating to detail and back"
+        )
+        XCTAssertTrue(listScreen.searchField.value as? String ?? "" == searchTerm)
+    }
+
+    // MARK: - Failing Test Example (To Display Failures in Report)
     func test_ErrorDisplaysInReport() {
         let detail = ServiceDetailScreen(app: app)
         XCTAssertTrue(detail.callButton.exists, "Call button only displays in Detail screen")

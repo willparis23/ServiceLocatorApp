@@ -3,7 +3,7 @@ import XCTest
 /// Represents a single row as it was actually rendered on screen,
 /// parsed from the accessibility label. Tests assert against these
 /// values rather than hardcoded service names.
-struct RenderedServiceRow {
+struct RenderedServiceRow: Equatable {
     let name: String
     let category: String
     let distanceMiles: Double?
@@ -148,6 +148,7 @@ final class ServiceListScreen {
         chip.tap()
     }
 
+    // tapping the all categories button
     func tapAllCategoriesChip() {
         allCategoriesButton.tap()
     }

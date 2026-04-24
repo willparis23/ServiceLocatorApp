@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,8 +16,6 @@
 		A100000007000001 /* ElementUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000007000001 /* ElementUtility.swift */; };
 		A100000008000001 /* ServiceListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000008000001 /* ServiceListScreen.swift */; };
 		A100000009000001 /* ServiceDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000009000001 /* ServiceDetailScreen.swift */; };
-		A10000000A000001 /* ServiceListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000A000001 /* ServiceListUITests.swift */; };
-		A10000000B000001 /* AccessibilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000B000001 /* AccessibilityUITests.swift */; };
 		A10000000C000001 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000C000001 /* LocationProvider.swift */; };
 		BEF374D52F99AEC8008B41B0 /* BaseClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF374D42F99AEC8008B41B0 /* BaseClass.swift */; };
 /* End PBXBuildFile section */
@@ -42,14 +40,16 @@
 		B100000007000001 /* ElementUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementUtility.swift; sourceTree = "<group>"; };
 		B100000008000001 /* ServiceListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListScreen.swift; sourceTree = "<group>"; };
 		B100000009000001 /* ServiceDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailScreen.swift; sourceTree = "<group>"; };
-		B10000000A000001 /* ServiceListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListUITests.swift; sourceTree = "<group>"; };
-		B10000000B000001 /* AccessibilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUITests.swift; sourceTree = "<group>"; };
 		B10000000C000001 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		BE8AF6952F99406D0035FADB /* ServiceLocator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceLocator.xctestplan; sourceTree = "<group>"; };
 		BEF374D42F99AEC8008B41B0 /* BaseClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClass.swift; sourceTree = "<group>"; };
 		F100000001000001 /* ServiceLocator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceLocator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F100000002000001 /* ServiceLocatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceLocatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		BEAA6A712F9BA74D00344DA7 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		G100000001000001 /* Frameworks */ = {
@@ -95,9 +95,8 @@
 			isa = PBXGroup;
 			children = (
 				BEF374D42F99AEC8008B41B0 /* BaseClass.swift */,
+				BEAA6A712F9BA74D00344DA7 /* Tests */,
 				H100000009000001 /* PageObjects */,
-				B10000000A000001 /* ServiceListUITests.swift */,
-				B10000000B000001 /* AccessibilityUITests.swift */,
 			);
 			path = ServiceLocatorUITests;
 			sourceTree = "<group>";
@@ -187,6 +186,9 @@
 			dependencies = (
 				L100000001000001 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				BEAA6A712F9BA74D00344DA7 /* Tests */,
+			);
 			name = ServiceLocatorUITests;
 			productName = ServiceLocatorUITests;
 			productReference = F100000002000001 /* ServiceLocatorUITests.xctest */;
@@ -263,8 +265,6 @@
 				A100000008000001 /* ServiceListScreen.swift in Sources */,
 				BEF374D52F99AEC8008B41B0 /* BaseClass.swift in Sources */,
 				A100000009000001 /* ServiceDetailScreen.swift in Sources */,
-				A10000000A000001 /* ServiceListUITests.swift in Sources */,
-				A10000000B000001 /* AccessibilityUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
